@@ -1,0 +1,17 @@
+{
+  "default": "my-account",
+  "accounts": {
+    "my-account": {
+      "type": "oauth",
+      "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+      "client_secret": "YOUR_CLIENT_SECRET",
+      "token_file": "~/.config/mcp-google-ads/my-account.token"
+    },
+    "client-acme": {
+      "type": "oauth",
+      "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+      "client_secret": "YOUR_CLIENT_SECRET",
+      "token_file": "~/.config/mcp-google-ads/client-acme.token"
+    }
+  }
+}
