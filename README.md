@@ -122,3 +122,5 @@ Set `GOOGLE_ADS_DEVELOPER_TOKEN` in your environment. All other credentials stay
 ## License
 
 MIT
+
+<!-- mcp-name: io.github.Ayo-Fam/mcp-google-ads -->
