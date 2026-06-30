@@ -11,9 +11,9 @@
   "packages": [
     {
       "registryType": "pypi",
-      "identifier": "mcp-google-ads",
+      "identifier": "mcp-google-ads-multi",
       "version": "0.1.0",
-      "installInstructions": "uvx mcp-google-ads",
+      "installInstructions": "uvx mcp-google-ads-multi",
       "transport": {
         "type": "stdio"
       },

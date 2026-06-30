@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mcp-google-ads"
+name = "mcp-google-ads-multi"
 version = "0.1.0"
 description = "Multi-account Google Ads MCP server"
 readme = "README.md"
@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mcp-google-ads = "gads.server:main"
+mcp-google-ads-multi = "gads.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["gads"]

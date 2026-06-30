@@ -3,7 +3,7 @@
 Multi-account Google Ads MCP server. Connect any number of Google Ads accounts to Claude, Cursor, Codex, or any MCP-compatible AI assistant — query campaign performance, keywords, search terms, and account analytics by name in the same session.
 
 ```
-# Install:  uvx mcp-google-ads
+# Install:  uvx mcp-google-ads-multi
 
 # Ask your AI:
 "Show me campaign performance for account my-client last month"
@@ -50,7 +50,7 @@ cp accounts.example.json ~/.config/mcp-google-ads/accounts.json
   "mcpServers": {
     "google-ads": {
       "command": "uvx",
-      "args": ["mcp-google-ads"],
+      "args": ["mcp-google-ads-multi"],
       "env": {
         "GOOGLE_ADS_DEVELOPER_TOKEN": "your-developer-token",
         "GOOGLE_ADS_ACCOUNTS_CONFIG": "/Users/you/.config/mcp-google-ads/accounts.json"
