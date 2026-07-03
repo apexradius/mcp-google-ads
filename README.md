@@ -14,6 +14,61 @@ Multi-account Google Ads MCP server. Connect any number of Google Ads accounts t
 
 ---
 
+## Start Here
+
+| You are | Start with | Time |
+|---|---|---:|
+| Installing the server | [Quickstart](#quickstart) | 10 min |
+| Connecting several accounts | [Accounts config](#accounts-config) | 10 min |
+| Extending tools | [docs/architecture.md](docs/architecture.md) and `gads/server.py` | 15 min |
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Client[MCP client] -->|stdio or SSE| Server[gads/server.py]
+
+    subgraph Local config
+        Env[environment] --> Accounts[accounts.json]
+        Accounts --> Auth[OAuth or service account]
+    end
+
+    Server --> AccountsMod[gads/accounts.py]
+    Server --> Query[gads/query.py]
+    Server --> Retry[gads/retry.py]
+    AccountsMod --> Auth
+    Query -->|GAQL| Ads[Google Ads API]
+    Retry -->|backoff| Ads
+    Ads -->|metrics| Server
+    Server -->|tool result| Client
+```
+
+More detail lives in [docs/architecture.md](docs/architecture.md).
+
+---
+
+## Primary Workflow
+
+```mermaid
+flowchart TD
+    Ask([User asks for Ads data]) --> Tool[Select MCP tool]
+    Tool --> Account{Account named?}
+    Account -->|yes| LoadNamed[Load named account]
+    Account -->|no| LoadDefault[Load default account]
+    LoadNamed --> Auth[Resolve credentials]
+    LoadDefault --> Auth
+    Auth --> Query[Build GAQL query]
+    Query --> Execute[Call Google Ads API]
+    Execute --> Retry{Rate limited?}
+    Retry -->|yes| Backoff[Retry with backoff]
+    Retry -->|no| Return[Return metrics]
+    Backoff --> Execute
+```
+
+---
+
 ## Why this one?
 
 Most Google Ads MCP servers support one account per server process. This one lets you configure multiple accounts and switch between them per tool call — no restart needed.
@@ -122,5 +177,10 @@ Set `GOOGLE_ADS_DEVELOPER_TOKEN` in your environment. All other credentials stay
 ## License
 
 MIT
+
+## Reference
+
+- [Architecture](docs/architecture.md)
+- [Start here](docs/start-here.md)
 
 <!-- mcp-name: io.github.Ayo-Fam/mcp-google-ads -->
