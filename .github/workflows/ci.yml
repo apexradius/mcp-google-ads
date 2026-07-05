@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.11
+      - run: uv pip install -e .
+      - name: Lint
+        run: uvx ruff check gads/
+      - name: Test
+        run: uv run python -m unittest discover -s tests -v

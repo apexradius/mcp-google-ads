@@ -4,7 +4,7 @@ from typing import Optional
 from fastmcp import FastMCP
 
 from gads.accounts import AccountManager, AccountError
-from gads.query import run_query, clean_id
+from gads.query import run_query
 from gads.retry import with_retry
 
 mcp = FastMCP("mcp-google-ads")

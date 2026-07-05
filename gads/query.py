@@ -1,5 +1,4 @@
 """GAQL query helpers."""
-from typing import Any
 
 from google.ads.googleads.client import GoogleAdsClient
 
