@@ -1,32 +1,53 @@
-# Start Here
+# Start Here — mcp-google-ads
 
-This server exposes Google Ads reporting and account tools through MCP. It is designed for
-multi-account work where a single AI session needs to switch between named Google Ads accounts.
+## What this repo ships
 
-## First Run
+- One Python package: `mcp-google-ads-multi`
+- One MCP server entry point: `gads.server:main`
+- One account-manager layer that lets one MCP server address many Google Ads accounts
 
-```bash
-uvx mcp-google-ads-multi
-```
+## First run
 
-Then configure an MCP client with `GOOGLE_ADS_DEVELOPER_TOKEN` and
-`GOOGLE_ADS_ACCOUNTS_CONFIG`.
-
-## Account Setup
-
-1. Create or confirm a Google Ads developer token.
-2. Create OAuth desktop app credentials in Google Cloud.
-3. Copy `accounts.example.json` to your config directory.
-4. Add one named account per customer or login context.
-5. Restart the MCP client and call `list_accounts`.
-
-## Development Loop
+1. Install the package:
 
 ```bash
-uv sync
-uv run ruff check .
-uv run python -m gads.server
+python -m pip install mcp-google-ads-multi
 ```
 
-Use `gads/server.py` for tool registration, `gads/accounts.py` for account loading, and
-`gads/query.py` for Google Ads query construction.
+2. Create the accounts config:
+
+```bash
+mkdir -p ~/.config/mcp-google-ads
+cp accounts.example.json ~/.config/mcp-google-ads/accounts.json
+```
+
+3. Export the required token and config path:
+
+```bash
+export GOOGLE_ADS_DEVELOPER_TOKEN="your-developer-token"
+export GOOGLE_ADS_ACCOUNTS_CONFIG="$HOME/.config/mcp-google-ads/accounts.json"
+```
+
+## Required environment
+
+| Variable | Required | Notes |
+|---|---|---|
+| `GOOGLE_ADS_DEVELOPER_TOKEN` | yes | Required by the Google Ads API |
+| `GOOGLE_ADS_ACCOUNTS_CONFIG` | yes | Path to the multi-account config file |
+| `MCP_TRANSPORT` | optional | `stdio` by default, `sse` for remote hosting |
+| `MCP_HOST` / `MCP_PORT` | optional | SSE bind address when remote transport is enabled |
+
+## Validation commands
+
+```bash
+python -m compileall gads
+python -m build
+```
+
+## Common failures
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Account not found | Config alias mismatch | Check the `default` key and account names in `accounts.json` |
+| OAuth prompt never completes | Local OAuth credentials missing | Recreate the desktop OAuth client in Google Cloud |
+| API auth error | Developer token missing or wrong | Re-export `GOOGLE_ADS_DEVELOPER_TOKEN` |

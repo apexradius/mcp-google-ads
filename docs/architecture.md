@@ -1,61 +1,19 @@
-# Architecture
+# Architecture — mcp-google-ads
 
-`mcp-google-ads` is a Python MCP server around the Google Ads API. Its main job is to route a
-natural-language AI request into a named Google Ads account, build a GAQL query, and return a
-structured MCP result.
+## Component map
 
-## Components
-
-```mermaid
-flowchart TD
-    Main[gads/server.py] --> Tools[MCP tool handlers]
-    Tools --> Accounts[gads/accounts.py]
-    Tools --> Query[gads/query.py]
-    Tools --> Retry[gads/retry.py]
-
-    Accounts --> Config[accounts.example.json shape]
-    Accounts --> OAuth[gads/auth]
-    Query --> GAQL[GAQL builder]
-    Retry --> Backoff[API retry policy]
-    OAuth --> API[Google Ads API]
-    GAQL --> API
-    Backoff --> API
-```
-
-## Request Sequence
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant Client as MCP client
-    participant Server as gads/server.py
-    participant Accounts as gads/accounts.py
-    participant Google as Google Ads API
-
-    User->>Client: Ask for campaign metrics
-    Client->>Server: Call Ads tool
-    Server->>Accounts: Resolve default or named account
-    Accounts-->>Server: Credentials and customer context
-    Server->>Google: Run GAQL request
-    Google-->>Server: Metrics rows
-    Server-->>Client: Structured MCP result
-    Client-->>User: Answer with account data
-```
-
-## Data Boundaries
-
-| Data | Source | Storage |
+| Component | File | Role |
 |---|---|---|
-| Developer token | Environment variable | Never committed. |
-| Account map | `accounts.json` based on `accounts.example.json` | Local config path. |
-| OAuth token files | Paths declared per account | Local machine or mounted config. |
-| Google Ads metrics | Google Ads API | Returned through MCP; not persisted by this repo. |
+| MCP server | [`../gads/server.py`](../gads/server.py) | Declares the tool surface and normalizes responses |
+| Account manager | [`../gads/accounts.py`](../gads/accounts.py) | Resolves named accounts and builds clients |
+| Query helpers | [`../gads/query.py`](../gads/query.py) | Cleans IDs and executes GAQL |
+| Retry wrapper | [`../gads/retry.py`](../gads/retry.py) | Retries transient Google Ads API failures |
+| Package metadata | [`../pyproject.toml`](../pyproject.toml) | Version, dependency set, script entry point |
 
-## Extension Points
+## Runtime lifecycle
 
-| Change | File |
-|---|---|
-| Add a new MCP tool | `gads/server.py` |
-| Add account-loading behavior | `gads/accounts.py` |
-| Change Ads query construction | `gads/query.py` |
-| Tune transient error handling | `gads/retry.py` |
+1. The MCP client launches `mcp-google-ads-multi`.
+2. `FastMCP` registers the account, summary, campaign, keyword, and ad-reporting tools.
+3. The selected tool resolves the named or default account through `AccountManager`.
+4. GAQL queries run through reusable query helpers and the retry wrapper.
+5. Results return as plain dictionaries and lists for the MCP client.
