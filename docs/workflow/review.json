@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "complete": false,
+  "scope": "Google Ads MCP: portable document navigation and source-bound review continuity; no product runtime changes.",
+  "reviewed_at": "2026-09-28T15:22:01.518291+00:00",
+  "source_revision": "39471e2ed644bca3ea1e2b3a8b57bf09f731c4fd",
+  "files": {
+    "README.md": "ef243d4f3e62a7153cb7808d12dc9190c1d5cd5ee31c2821c2915fe3e14d5de0",
+    "prompt.md": "8b33f1892c048e32627e88e52e296cc0610e1c46d0fcce904a0edcc56631cc8f",
+    "INDEX.md": "8c3fa78a4093d7f3e4b1fcf03bb4f7ed995c5f77c77add7c37b37819c9a9260c",
+    "docs/workflow/HANDOFFS.md": "ff56a6a36989059b121957421981747faed30c203d1a6011b877a19754841856"
+  },
+  "stages": {
+    "local": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Run tracked navigation, review consistency, checker fixtures and repository-required checks before delivery."
+    },
+    "ci": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Current candidate hosted checks not yet observed."
+    },
+    "merge": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Current candidate not delivered."
+    },
+    "deployment": {
+      "required": false,
+      "status": "not_applicable",
+      "evidence": "Documentation-only scope; no product release authorized by this record."
+    },
+    "knowledge": {
+      "required": true,
+      "status": "pending",
+      "evidence": "Canonical documentation prepared; portfolio summary closeout remains pending."
+    }
+  }
+}
