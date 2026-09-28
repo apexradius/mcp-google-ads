@@ -27,6 +27,10 @@ Inspected means source/test definitions were read. Locally verified means the na
 
 - [tests/test_server.py](../../tests/test_server.py)
 
+## Document checker dependency
+
+Install the pinned CommonMark parser with `python -m pip install -r tools/requirements-workflow.txt` before running the document checkers and their fixtures. `markdown-it-py` parses actual navigation tokens; it does not render pages, fetch links or establish reader comprehension. CI uses Python 3.12 and the same pinned dependency.
+
 ## Continue
 
 Return to [INDEX.md](../../INDEX.md) and finish all routes relevant to the latest task before acting. After verification, update affected owning facts, REPORT and HANDOFFS.
