@@ -18,7 +18,7 @@ Evidence level: inspected
 
 ### Compare account totals without changing another profile’s default
 
-Reader recovery: Use explicit account on read methods; set_default_account writes JSON. breakdown=account is ignored by compare_periods, which always selects campaign rows limited to50 per period. Recover requested aggregate/date/currency contract before reporting account totals.
+Reader recovery: Use explicit account on read methods; set_default_account writes JSON. breakdown=account is ignored by compare_periods, which always selects campaign rows limited to 50 per period. Recover requested aggregate/date/currency contract before reporting account totals.
 
 Source and dossier evidence: ["gads/server.py:compare_periods", "gads/server.py:set_default_account", "gads/accounts.py:set_default", "docs/workflow/API.md"]
 
