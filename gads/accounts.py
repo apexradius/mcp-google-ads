@@ -1,7 +1,6 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional
 
 from google.ads.googleads.client import GoogleAdsClient
 
@@ -25,7 +24,7 @@ class AccountManager:
         self._path = path
         self._clients: dict[str, GoogleAdsClient] = {}
 
-    def _account_name(self, account: Optional[str]) -> str:
+    def _account_name(self, account: str | None) -> str:
         name = account or self._config.get("default")
         if not name:
             raise AccountError("No account specified and no default set in config.")
@@ -34,7 +33,7 @@ class AccountManager:
             raise AccountError(f"Account '{name}' not found. Available: {available}")
         return name
 
-    def get_client(self, account: Optional[str] = None) -> GoogleAdsClient:
+    def get_client(self, account: str | None = None) -> GoogleAdsClient:
         name = self._account_name(account)
         if name not in self._clients:
             self._clients[name] = self._build_client(name)
@@ -85,6 +84,6 @@ class AccountManager:
         self._config["default"] = name
         self._path.write_text(json.dumps(self._config, indent=2))
 
-    def invalidate(self, account: Optional[str] = None) -> None:
+    def invalidate(self, account: str | None = None) -> None:
         name = self._account_name(account)
         self._clients.pop(name, None)
