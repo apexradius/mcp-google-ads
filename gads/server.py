@@ -1,15 +1,14 @@
 import os
-from typing import Optional
 
 from fastmcp import FastMCP
 
-from gads.accounts import AccountManager, AccountError
+from gads.accounts import AccountError, AccountManager
 from gads.query import run_query
 from gads.retry import with_retry
 
 mcp = FastMCP("mcp-google-ads")
 
-_manager: Optional[AccountManager] = None
+_manager: AccountManager | None = None
 
 
 def _get_manager() -> AccountManager:
@@ -22,7 +21,7 @@ def _get_manager() -> AccountManager:
 def _err(e: Exception) -> dict:
     if isinstance(e, (AccountError, RuntimeError)):
         return {"error": str(e)}
-    return {"error": f"{type(e).__name__}: {str(e)}"}
+    return {"error": f"{type(e).__name__}: {e!s}"}
 
 
 # ---------------------------------------------------------------------------
@@ -34,7 +33,7 @@ def list_accounts() -> list[dict]:
     """List all configured Google Ads accounts and which is the current default."""
     try:
         return _get_manager().list_accounts()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -44,7 +43,7 @@ def set_default_account(account: str) -> dict:
     try:
         _get_manager().set_default(account)
         return {"success": True, "default": account}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -54,8 +53,8 @@ def set_default_account(account: str) -> dict:
 
 @mcp.tool()
 def list_customers(
-    account: Optional[str] = None,
-    customer_id: Optional[str] = None,
+    account: str | None = None,
+    customer_id: str | None = None,
 ) -> list[dict]:
     """
     List all accessible Google Ads customer accounts.
@@ -88,10 +87,10 @@ def list_customers(
                         "is_manager": r.manager,
                         "status": r.status.name,
                     })
-            except Exception:
+            except Exception:  # noqa: BLE001 - any per-customer query failure means access restricted
                 customers.append({"id": cid, "name": "(access restricted)"})
         return customers
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -100,7 +99,7 @@ def get_account_summary(
     customer_id: str,
     start_date: str,
     end_date: str,
-    account: Optional[str] = None,
+    account: str | None = None,
 ) -> dict:
     """
     Get top-level spend and conversion totals for an account.
@@ -142,7 +141,7 @@ def get_account_summary(
             "conversion_value": round(m.conversions_value, 2),
             "search_impression_share": round(m.search_impression_share * 100, 1) if m.search_impression_share else None,
         }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -153,8 +152,8 @@ def get_account_summary(
 @mcp.tool()
 def list_campaigns(
     customer_id: str,
-    status: Optional[str] = None,
-    account: Optional[str] = None,
+    status: str | None = None,
+    account: str | None = None,
 ) -> list[dict]:
     """
     List campaigns for an account.
@@ -199,7 +198,7 @@ def list_campaigns(
             }
             for r in rows
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -208,8 +207,8 @@ def get_campaign_performance(
     customer_id: str,
     start_date: str,
     end_date: str,
-    campaign_id: Optional[str] = None,
-    account: Optional[str] = None,
+    campaign_id: str | None = None,
+    account: str | None = None,
 ) -> list[dict]:
     """
     Get campaign performance metrics for a date range.
@@ -267,7 +266,7 @@ def get_campaign_performance(
             }
             for r in rows
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -279,7 +278,7 @@ def compare_periods(
     period2_start: str,
     period2_end: str,
     breakdown: str = "campaign",
-    account: Optional[str] = None,
+    account: str | None = None,
 ) -> dict:
     """
     Compare performance between two date ranges.
@@ -345,7 +344,7 @@ def compare_periods(
             "period2": f"{period2_start} to {period2_end}",
             "campaigns": comparison,
         }
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -358,9 +357,9 @@ def get_keyword_performance(
     customer_id: str,
     start_date: str,
     end_date: str,
-    campaign_id: Optional[str] = None,
+    campaign_id: str | None = None,
     row_limit: int = 50,
-    account: Optional[str] = None,
+    account: str | None = None,
 ) -> list[dict]:
     """
     Get keyword-level performance including quality scores.
@@ -421,7 +420,7 @@ def get_keyword_performance(
             }
             for r in rows
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -430,9 +429,9 @@ def search_terms_report(
     customer_id: str,
     start_date: str,
     end_date: str,
-    campaign_id: Optional[str] = None,
+    campaign_id: str | None = None,
     row_limit: int = 50,
-    account: Optional[str] = None,
+    account: str | None = None,
 ) -> list[dict]:
     """
     Get actual search terms that triggered your ads.
@@ -482,7 +481,7 @@ def search_terms_report(
             }
             for r in rows
         ]
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
@@ -495,9 +494,9 @@ def get_ad_performance(
     customer_id: str,
     start_date: str,
     end_date: str,
-    campaign_id: Optional[str] = None,
+    campaign_id: str | None = None,
     row_limit: int = 25,
-    account: Optional[str] = None,
+    account: str | None = None,
 ) -> list[dict]:
     """
     Get ad-level performance (headlines, descriptions, CTR, conversions).
@@ -558,7 +557,7 @@ def get_ad_performance(
                 "conversions": round(r.metrics.conversions, 1),
             })
         return result
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
 
 
