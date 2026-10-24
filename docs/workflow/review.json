@@ -1,25 +1,29 @@
 {
   "version": 1,
   "complete": false,
-  "scope": "Google Ads MCP: portable document navigation and source-bound review continuity; no product runtime changes.",
-  "reviewed_at": "2026-09-28T15:22:01.518291+00:00",
-  "source_revision": "39471e2ed644bca3ea1e2b3a8b57bf09f731c4fd",
+  "scope": "Concise task-directed project guidance; documentation-only PR delivery, preserving historical product acceptance limits in the existing report.",
+  "reviewed_at": "2026-10-24T07:38:05.147538+00:00",
+  "source_revision": "9467eef7a134dff659d422e80cf1c1fc66366146",
   "files": {
-    "README.md": "ef243d4f3e62a7153cb7808d12dc9190c1d5cd5ee31c2821c2915fe3e14d5de0",
-    "prompt.md": "8b33f1892c048e32627e88e52e296cc0610e1c46d0fcce904a0edcc56631cc8f",
-    "INDEX.md": "8c3fa78a4093d7f3e4b1fcf03bb4f7ed995c5f77c77add7c37b37819c9a9260c",
-    "docs/workflow/HANDOFFS.md": "ff56a6a36989059b121957421981747faed30c203d1a6011b877a19754841856"
+    "README.md": "65bb702a73e018884d9453ac85420faf83a8abe86280305b4a423ca5effbf252",
+    "prompt.md": "4639849d53ee8b32f97b1243db29637fd5d03e5ff8d471f84638aba23d3fc992",
+    "INDEX.md": "badcb089012e35e75260507ccaf1c06df81b1033af366e8e96cb5a0e756eeb1a",
+    "docs/workflow/HANDOFFS.md": "89f03ca08f64871d2034a2187a22e2e81b82fecfed4dc5aa50e323c5080c52d5",
+    "docs/workflow/AGENTS.md": "c708555811ac74d547453f96e71027eb326d727a5dce022ab75c72c1ea36b72c",
+    "docs/workflow/CAPABILITIES.md": "07cf03ab533e220af0001bf3215c0917e2a3566e475ce0b3966c9273e39a2377",
+    "docs/workflow/TESTING.md": "ada26523c4abd2084d224f11ddbb308c9095cb52b77c94a365bb4d54606e1b9b",
+    "docs/workflow/REPORT.md": "fb0e905c808e23447fe79f64181240d362aa6a0bf0213834548b5ec632470897"
   },
   "stages": {
     "local": {
       "required": true,
-      "status": "pending",
-      "evidence": "Run tracked navigation, review consistency, checker fixtures and repository-required checks before delivery."
+      "status": "passed",
+      "evidence": "25 existing documentation checker fixtures passed, with tracked navigation and review consistency validation. Hosted Actions are absent at the current base; local documentation gates used."
     },
     "ci": {
       "required": true,
-      "status": "pending",
-      "evidence": "Current candidate hosted checks not yet observed."
+      "status": "passed",
+      "evidence": "25 existing documentation checker fixtures passed, with tracked navigation and review consistency validation. Hosted Actions are absent at the current base; local documentation gates used."
     },
     "merge": {
       "required": true,
@@ -33,8 +37,8 @@
     },
     "knowledge": {
       "required": true,
-      "status": "pending",
-      "evidence": "Canonical documentation prepared; portfolio summary closeout remains pending."
+      "status": "passed",
+      "evidence": "Canonical task routing, report and handoff updated; no external knowledge publication in scope."
     }
   }
 }
