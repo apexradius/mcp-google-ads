@@ -21,7 +21,7 @@ Reporting is read-only with respect to advertising campaigns. A configured accou
 
 The code interpolates date/status/campaign filters into GAQL without comprehensive domain validation. Treat those inputs as untrusted and add validation if the tool contract is changed. Reports can disclose account data despite being read-only. The server has no per-call human-approval mechanism. A configuration path or profile listing is not permission to query every account.
 
-Route the current task through [the conductor selector](../../prompt.md#select-the-conductor). No native runtime, MCP connection, paid model, hook or third-party account is activated by this inventory. Verify availability in the actual invocation instead of inferring it from installed source.
+Route the current task through [task workflow guidance](../../prompt.md#task-workflow). No native runtime, MCP connection, paid model, hook or third-party account is activated by this inventory. Verify availability in the actual invocation instead of inferring it from installed source.
 
 ## Supporting sources
 
