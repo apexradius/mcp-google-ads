@@ -13,7 +13,7 @@
 
 ## Exact current interface
 
-Ten tools: list_accounts(); set_default_account(account); list_customers(account?, customer_id?); get_account_summary(customer_id,start_date,end_date,account?); list_campaigns(customer_id,status?,account?); get_campaign_performance(customer_id,start_date,end_date,campaign_id?,account?); compare_periods(customer_id,period1_start,period1_end,period2_start,period2_end,breakdown="campaign",account?); get_keyword_performance(...,row_limit=50); search_terms_report(...,row_limit=50); get_ad_performance(...,row_limit=25). Keyword/search-term limits clamp to 1..1000; ad limits to 1..500; campaign reports cap at 100; comparisons query 50 campaigns per period. list_campaigns uses LAST_30_DAYS and enabled/paused by default. Cost and average CPC divide micros by 1,000,000; CTR is percentage in mapped reports. Errors return {error: message}, including functions annotated as lists. Retry permits five attempts on RESOURCE_EXHAUSTED, INTERNAL and UNAVAILABLE, with 1/2/4/8-second waits. Entry transport defaults stdio; MCP_TRANSPORT=sse uses MCP_HOST default 127.0.0.1 and MCP_PORT default 3001.
+Ten tools: list_accounts(); set_default_account(account); list_customers(account?, customer_id?); get_account_summary(customer_id,start_date,end_date,account?); list_campaigns(customer_id,status?,account?); get_campaign_performance(customer_id,start_date,end_date,campaign_id?,account?); compare_periods(customer_id,period1_start,period1_end,period2_start,period2_end,breakdown="campaign",account?); get_keyword_performance(...,row_limit=50); search_terms_report(...,row_limit=50); get_ad_performance(...,row_limit=25). Keyword/search-term limits clamp to 1..1000; ad limits to 1..500; campaign reports cap at 100; comparisons query 50 campaigns per period for breakdown=campaign or one customer aggregate row per period for breakdown=account. list_campaigns uses LAST_30_DAYS and enabled/paused by default. Cost and average CPC divide micros by 1,000,000; CTR is percentage in mapped reports. Errors return {error: message}, including functions annotated as lists. Retry permits five attempts on RESOURCE_EXHAUSTED, INTERNAL and UNAVAILABLE, with 1/2/4/8-second waits. Entry transport defaults stdio; MCP_TRANSPORT=sse uses MCP_HOST default 127.0.0.1 and MCP_PORT default 3001.
 
 ## Complete registered signatures
 
@@ -38,7 +38,7 @@ The code interpolates date/status/campaign filters into GAQL without comprehensi
 
 ## Contract gaps
 
-1. list_customers accepts customer_id and claims MCC child discovery, but never uses customer_id; it lists accessible customers for the login. 2. compare_periods accepts breakdown="account" but always queries/maps campaigns. 3. Missing-token text suggests an auth subcommand that is absent from the inspected CLI entrypoint. 4. Source tests do not establish report semantics, paging completeness or fresh provider compatibility. Proposed next work is a bounded contract reconciliation with fake clients; no owner-ranked product backlog or current account task was found.
+1. list_customers accepts customer_id and claims MCC child discovery, but never uses customer_id; it lists accessible customers for the login. 2. Missing-token text suggests an auth subcommand that is absent from the inspected CLI entrypoint. 3. Source tests do not establish report semantics, paging completeness or fresh provider compatibility. Proposed next work is a bounded contract reconciliation with fake clients; no owner-ranked product backlog or current account task was found.
 
 ## Supporting sources
 

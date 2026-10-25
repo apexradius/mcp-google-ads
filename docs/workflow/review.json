@@ -2,17 +2,17 @@
   "version": 1,
   "complete": false,
   "scope": "Concise task-directed project guidance; documentation-only PR delivery, preserving historical product acceptance limits in the existing report.",
-  "reviewed_at": "2026-10-24T07:38:05.147538+00:00",
-  "source_revision": "9467eef7a134dff659d422e80cf1c1fc66366146",
+  "reviewed_at": "2026-10-25T06:05:27.501935+00:00",
+  "source_revision": "0f0e78e5b57379189659633413736fe950c000e3",
   "files": {
     "README.md": "65bb702a73e018884d9453ac85420faf83a8abe86280305b4a423ca5effbf252",
-    "prompt.md": "4639849d53ee8b32f97b1243db29637fd5d03e5ff8d471f84638aba23d3fc992",
+    "prompt.md": "cd7650f4ea06f0e23c4f490165454f72bace2e1dd10141ce81a47e1d53f70ea8",
     "INDEX.md": "badcb089012e35e75260507ccaf1c06df81b1033af366e8e96cb5a0e756eeb1a",
-    "docs/workflow/HANDOFFS.md": "89f03ca08f64871d2034a2187a22e2e81b82fecfed4dc5aa50e323c5080c52d5",
+    "docs/workflow/HANDOFFS.md": "37f7c4881377da5b96316446953d727502a2e743b74db7d7554b656c02641edb",
     "docs/workflow/AGENTS.md": "c708555811ac74d547453f96e71027eb326d727a5dce022ab75c72c1ea36b72c",
-    "docs/workflow/CAPABILITIES.md": "07cf03ab533e220af0001bf3215c0917e2a3566e475ce0b3966c9273e39a2377",
+    "docs/workflow/CAPABILITIES.md": "a89658a4e05d64095f78543589b6430626b20b962707d39347a55a68271442da",
     "docs/workflow/TESTING.md": "ada26523c4abd2084d224f11ddbb308c9095cb52b77c94a365bb4d54606e1b9b",
-    "docs/workflow/REPORT.md": "fb0e905c808e23447fe79f64181240d362aa6a0bf0213834548b5ec632470897"
+    "docs/workflow/REPORT.md": "517addf09140030aae30581f7733042ee28f9bc4c1e9defa96f9ba7b97b14b30"
   },
   "stages": {
     "local": {
