@@ -29,7 +29,7 @@ The FastMCP server lazily creates AccountManager, which resolves a named profile
 
 ## Current requirement debt
 
-1. list_customers accepts customer_id and claims MCC child discovery, but never uses customer_id; it lists accessible customers for the login. 2. Missing-token text suggests an auth subcommand that is absent from the inspected CLI entrypoint. 3. Source tests do not establish report semantics, paging completeness or fresh provider compatibility. Proposed next work is a bounded contract reconciliation with fake clients; no owner-ranked product backlog or current account task was found.
+Open work and blockers are owned by [HANDOFFS.md](HANDOFFS.md); read that section before planning changes here.
 
 Classify a future statement as original requirement, later amendment, observed implementation, inferred rationale or proposed change. Preserve the distinction: source behavior does not silently repeal an original promise, and a plausible rationale is not a recorded decision.
 

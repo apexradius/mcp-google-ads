@@ -21,6 +21,8 @@ The current main candidate is 39471e2 (2026-09-16 CI gate merge). July history r
 
 1. list_customers accepts customer_id and claims MCC child discovery, but never uses customer_id; it lists accessible customers for the login. 2. Missing-token text suggests an auth subcommand that is absent from the inspected CLI entrypoint. 3. Source tests do not establish report semantics, paging completeness or fresh provider compatibility. Proposed next work is a bounded contract reconciliation with fake clients; no owner-ranked product backlog or current account task was found.
 
+This "Open work and blockers" list is the single owner of the shared unresolved-work facts; other documents point here instead of copying it.
+
 The latest user request selects the actual task. These proposed maintenance priorities are not an approved feature roadmap, provider action or automatic queue. If the user only says “read and begin,” reconcile these findings against the current candidate and report the smallest useful next action; do not resume completed documentation adoption or replay an old submission.
 
 ## Next handoff contract
