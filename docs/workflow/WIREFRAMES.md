@@ -17,7 +17,7 @@ Choose the authorized credential profile and customer -> discover accessible cus
 
 ## Entry, result and failure states
 
-The user experience is the MCP tool schema and report result, not a web page. Present dates, customer, currency context and units before interpreting change. compare_periods returns campaigns with period1, period2, delta_clicks, delta_cost and delta_conversions sorted by absolute cost change. It does not compute statistical significance or attribute causation. Keep unavailable impression-share values distinct from numeric zero.
+The user experience is the MCP tool schema and report result, not a web page. Present dates, customer, currency context and units before interpreting change. compare_periods returns campaigns keyed by campaign_id (breakdown=campaign, top 50 per period) or accounts keyed by customer_id (breakdown=account) with period1, period2, delta_clicks, delta_cost and delta_conversions sorted by absolute cost change. It does not compute statistical significance or attribute causation. Keep unavailable impression-share values distinct from numeric zero.
 
 The code interpolates date/status/campaign filters into GAQL without comprehensive domain validation. Treat those inputs as untrusted and add validation if the tool contract is changed. Reports can disclose account data despite being read-only. The server has no per-call human-approval mechanism. A configuration path or profile listing is not permission to query every account.
 

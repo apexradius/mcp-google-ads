@@ -28,6 +28,7 @@ def _err(e: Exception) -> dict:
 # Account management
 # ---------------------------------------------------------------------------
 
+
 @mcp.tool()
 def list_accounts() -> list[dict]:
     """List all configured Google Ads accounts and which is the current default."""
@@ -50,6 +51,7 @@ def set_default_account(account: str) -> dict:
 # ---------------------------------------------------------------------------
 # Account & customer discovery
 # ---------------------------------------------------------------------------
+
 
 @mcp.tool()
 def list_customers(
@@ -79,14 +81,16 @@ def list_customers(
                 rows = with_retry(run_query, client, cid, gaql)
                 if rows:
                     r = rows[0].customer
-                    customers.append({
-                        "id": str(r.id),
-                        "name": r.descriptive_name,
-                        "currency": r.currency_code,
-                        "timezone": r.time_zone,
-                        "is_manager": r.manager,
-                        "status": r.status.name,
-                    })
+                    customers.append(
+                        {
+                            "id": str(r.id),
+                            "name": r.descriptive_name,
+                            "currency": r.currency_code,
+                            "timezone": r.time_zone,
+                            "is_manager": r.manager,
+                            "status": r.status.name,
+                        }
+                    )
             except Exception:  # noqa: BLE001 - any per-customer query failure means access restricted
                 customers.append({"id": cid, "name": "(access restricted)"})
         return customers
@@ -127,7 +131,11 @@ def get_account_summary(
         """
         rows = with_retry(run_query, client, customer_id, gaql)
         if not rows:
-            return {"customer_id": customer_id, "period": f"{start_date} to {end_date}", "clicks": 0}
+            return {
+                "customer_id": customer_id,
+                "period": f"{start_date} to {end_date}",
+                "clicks": 0,
+            }
         m = rows[0].metrics
         return {
             "customer_id": customer_id,
@@ -139,7 +147,9 @@ def get_account_summary(
             "cost": round(m.cost_micros / 1_000_000, 2),
             "conversions": round(m.conversions, 1),
             "conversion_value": round(m.conversions_value, 2),
-            "search_impression_share": round(m.search_impression_share * 100, 1) if m.search_impression_share else None,
+            "search_impression_share": round(m.search_impression_share * 100, 1)
+            if m.search_impression_share
+            else None,
         }
     except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
@@ -148,6 +158,7 @@ def get_account_summary(
 # ---------------------------------------------------------------------------
 # Campaign tools
 # ---------------------------------------------------------------------------
+
 
 @mcp.tool()
 def list_campaigns(
@@ -165,7 +176,11 @@ def list_campaigns(
     """
     try:
         client = _get_manager().get_client(account)
-        where = f"AND campaign.status = '{status}'" if status else "AND campaign.status IN ('ENABLED', 'PAUSED')"
+        where = (
+            f"AND campaign.status = '{status}'"
+            if status
+            else "AND campaign.status IN ('ENABLED', 'PAUSED')"
+        )
         gaql = f"""
             SELECT
                 campaign.id,
@@ -260,9 +275,15 @@ def get_campaign_performance(
                 "cost": round(r.metrics.cost_micros / 1_000_000, 2),
                 "conversions": round(r.metrics.conversions, 1),
                 "conversion_value": round(r.metrics.conversions_value, 2),
-                "cost_per_conversion": round(r.metrics.cost_per_conversion / 1_000_000, 2) if r.metrics.cost_per_conversion else None,
-                "search_impression_share": round(r.metrics.search_impression_share * 100, 1) if r.metrics.search_impression_share else None,
-                "search_top_is": round(r.metrics.search_top_impression_share * 100, 1) if r.metrics.search_top_impression_share else None,
+                "cost_per_conversion": round(r.metrics.cost_per_conversion / 1_000_000, 2)
+                if r.metrics.cost_per_conversion
+                else None,
+                "search_impression_share": round(r.metrics.search_impression_share * 100, 1)
+                if r.metrics.search_impression_share
+                else None,
+                "search_top_is": round(r.metrics.search_top_impression_share * 100, 1)
+                if r.metrics.search_top_impression_share
+                else None,
             }
             for r in rows
         ]
@@ -290,19 +311,21 @@ def compare_periods(
         breakdown: 'campaign' or 'account' level comparison
         account: Named account from config
     """
+    if breakdown not in {"campaign", "account"}:
+        return {"error": "breakdown must be campaign or account"}
+    resource = "customer" if breakdown == "account" else "campaign"
+    name_field = "descriptive_name" if breakdown == "account" else "name"
     try:
         client = _get_manager().get_client(account)
 
         def fetch(start, end):
             gaql = f"""
                 SELECT
-                    campaign.id, campaign.name,
+                    {resource}.id, {resource}.{name_field},
                     metrics.clicks, metrics.impressions, metrics.cost_micros, metrics.conversions
-                FROM campaign
+                FROM {resource}
                 WHERE segments.date BETWEEN '{start}' AND '{end}'
-                AND campaign.status != 'REMOVED'
-                ORDER BY metrics.cost_micros DESC
-                LIMIT 50
+                {"AND campaign.status != 'REMOVED' ORDER BY metrics.cost_micros DESC LIMIT 50" if breakdown == "campaign" else ""}
             """
             return with_retry(run_query, client, customer_id, gaql)
 
@@ -311,8 +334,8 @@ def compare_periods(
 
         def to_dict(rows):
             return {
-                str(r.campaign.id): {
-                    "name": r.campaign.name,
+                str(getattr(r, resource).id): {
+                    "name": getattr(getattr(r, resource), name_field),
                     "clicks": r.metrics.clicks,
                     "impressions": r.metrics.impressions,
                     "cost": round(r.metrics.cost_micros / 1_000_000, 2),
@@ -328,21 +351,29 @@ def compare_periods(
         for cid in set(p1) | set(p2):
             r1 = p1.get(cid, {})
             r2 = p2.get(cid, {})
-            comparison.append({
-                "campaign_id": cid,
-                "name": r1.get("name") or r2.get("name", ""),
-                "period1": {k: r1.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]},
-                "period2": {k: r2.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]},
-                "delta_clicks": r2.get("clicks", 0) - r1.get("clicks", 0),
-                "delta_cost": round(r2.get("cost", 0) - r1.get("cost", 0), 2),
-                "delta_conversions": round(r2.get("conversions", 0) - r1.get("conversions", 0), 1),
-            })
+            comparison.append(
+                {
+                    ("customer_id" if breakdown == "account" else "campaign_id"): cid,
+                    "name": r1.get("name") or r2.get("name", ""),
+                    "period1": {
+                        k: r1.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]
+                    },
+                    "period2": {
+                        k: r2.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]
+                    },
+                    "delta_clicks": r2.get("clicks", 0) - r1.get("clicks", 0),
+                    "delta_cost": round(r2.get("cost", 0) - r1.get("cost", 0), 2),
+                    "delta_conversions": round(
+                        r2.get("conversions", 0) - r1.get("conversions", 0), 1
+                    ),
+                }
+            )
 
         comparison.sort(key=lambda x: abs(x["delta_cost"]), reverse=True)
         return {
             "period1": f"{period1_start} to {period1_end}",
             "period2": f"{period2_start} to {period2_end}",
-            "campaigns": comparison,
+            ("accounts" if breakdown == "account" else "campaigns"): comparison,
         }
     except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
@@ -351,6 +382,7 @@ def compare_periods(
 # ---------------------------------------------------------------------------
 # Keyword tools
 # ---------------------------------------------------------------------------
+
 
 @mcp.tool()
 def get_keyword_performance(
@@ -405,9 +437,15 @@ def get_keyword_performance(
                 "keyword": r.ad_group_criterion.keyword.text,
                 "match_type": r.ad_group_criterion.keyword.match_type.name,
                 "quality_score": r.ad_group_criterion.quality_info.quality_score or None,
-                "ad_relevance": r.ad_group_criterion.quality_info.creative_quality_score.name if r.ad_group_criterion.quality_info.creative_quality_score else None,
-                "landing_page": r.ad_group_criterion.quality_info.post_click_quality_score.name if r.ad_group_criterion.quality_info.post_click_quality_score else None,
-                "expected_ctr": r.ad_group_criterion.quality_info.search_predicted_ctr.name if r.ad_group_criterion.quality_info.search_predicted_ctr else None,
+                "ad_relevance": r.ad_group_criterion.quality_info.creative_quality_score.name
+                if r.ad_group_criterion.quality_info.creative_quality_score
+                else None,
+                "landing_page": r.ad_group_criterion.quality_info.post_click_quality_score.name
+                if r.ad_group_criterion.quality_info.post_click_quality_score
+                else None,
+                "expected_ctr": r.ad_group_criterion.quality_info.search_predicted_ctr.name
+                if r.ad_group_criterion.quality_info.search_predicted_ctr
+                else None,
                 "status": r.ad_group_criterion.status.name,
                 "campaign": r.campaign.name,
                 "ad_group": r.ad_group.name,
@@ -489,6 +527,7 @@ def search_terms_report(
 # Ad performance
 # ---------------------------------------------------------------------------
 
+
 @mcp.tool()
 def get_ad_performance(
     customer_id: str,
@@ -541,21 +580,23 @@ def get_ad_performance(
             headlines = []
             if ad.responsive_search_ad and ad.responsive_search_ad.headlines:
                 headlines = [h.text for h in ad.responsive_search_ad.headlines[:3]]
-            result.append({
-                "ad_id": str(ad.id),
-                "type": ad.type_.name if ad.type_ else None,
-                "headlines": headlines,
-                "final_url": ad.final_urls[0] if ad.final_urls else None,
-                "status": r.ad_group_ad.status.name,
-                "campaign": r.campaign.name,
-                "ad_group": r.ad_group.name,
-                "clicks": r.metrics.clicks,
-                "impressions": r.metrics.impressions,
-                "ctr": round(r.metrics.ctr * 100, 2),
-                "avg_cpc": round(r.metrics.average_cpc / 1_000_000, 2),
-                "cost": round(r.metrics.cost_micros / 1_000_000, 2),
-                "conversions": round(r.metrics.conversions, 1),
-            })
+            result.append(
+                {
+                    "ad_id": str(ad.id),
+                    "type": ad.type_.name if ad.type_ else None,
+                    "headlines": headlines,
+                    "final_url": ad.final_urls[0] if ad.final_urls else None,
+                    "status": r.ad_group_ad.status.name,
+                    "campaign": r.campaign.name,
+                    "ad_group": r.ad_group.name,
+                    "clicks": r.metrics.clicks,
+                    "impressions": r.metrics.impressions,
+                    "ctr": round(r.metrics.ctr * 100, 2),
+                    "avg_cpc": round(r.metrics.average_cpc / 1_000_000, 2),
+                    "cost": round(r.metrics.cost_micros / 1_000_000, 2),
+                    "conversions": round(r.metrics.conversions, 1),
+                }
+            )
         return result
     except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
@@ -564,6 +605,7 @@ def get_ad_performance(
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def main():
     transport = os.environ.get("MCP_TRANSPORT", "stdio")

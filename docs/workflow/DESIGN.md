@@ -13,7 +13,7 @@
 
 ## Operator experience
 
-The user experience is the MCP tool schema and report result, not a web page. Present dates, customer, currency context and units before interpreting change. compare_periods returns campaigns with period1, period2, delta_clicks, delta_cost and delta_conversions sorted by absolute cost change. It does not compute statistical significance or attribute causation. Keep unavailable impression-share values distinct from numeric zero.
+The user experience is the MCP tool schema and report result, not a web page. Present dates, customer, currency context and units before interpreting change. compare_periods returns campaigns keyed by campaign_id (breakdown=campaign, top 50 per period) or accounts keyed by customer_id (breakdown=account) with period1, period2, delta_clicks, delta_cost and delta_conversions sorted by absolute cost change. It does not compute statistical significance or attribute causation. Keep unavailable impression-share values distinct from numeric zero.
 
 ## State and error presentation
 
