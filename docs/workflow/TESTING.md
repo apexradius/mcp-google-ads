@@ -5,15 +5,15 @@
 | Question | Answer |
 | --- | --- |
 | **Whom?** | advertising analyst comparing explicitly selected Google Ads customer accounts. |
-| **What?** | tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior and customer-ID normalization. |
+| **What?** | tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior, customer-ID normalization and compare_periods breakdown contracts with faked queries. |
 | **Where?** | tests/test_server.py. |
 | **Why it exists?** | Google Ads reporting MCP needs this document to choose a check that proves the changed behavior without claiming broader evidence. |
-| **Why this approach?** | tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior and customer-ID normalization. |
+| **Why this approach?** | tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior, customer-ID normalization and compare_periods breakdown contracts with faked queries. |
 | **Why it matters?** | A registration or document check cannot prove live authentication, provider state or the installed user path. |
 
 ## Required proof by behavior
 
-tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior and customer-ID normalization. These are hermetic seams, not report correctness or live authentication evidence. For a code change, use python -m unittest discover -s tests after verifying the local dependency environment. Add a targeted fake-client test for any changed GAQL/report mapping; do not call real advertising accounts for a documentation check.
+tests/test_server.py uses unittest and mock; it asserts the exact ten-tool registration set and schemas, missing-config behavior, customer-ID normalization and compare_periods breakdown contracts with faked queries. These are hermetic seams, not report correctness or live authentication evidence. For a code change, use python -m unittest discover -s tests after verifying the local dependency environment. Add a targeted fake-client test for any changed GAQL/report mapping; do not call real advertising accounts for a documentation check.
 
 ## Product acceptance baseline
 
