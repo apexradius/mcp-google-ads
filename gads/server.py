@@ -290,19 +290,21 @@ def compare_periods(
         breakdown: 'campaign' or 'account' level comparison
         account: Named account from config
     """
+    if breakdown not in {"campaign", "account"}:
+        return {"error": "breakdown must be campaign or account"}
+    resource = "customer" if breakdown == "account" else "campaign"
+    name_field = "descriptive_name" if breakdown == "account" else "name"
     try:
         client = _get_manager().get_client(account)
 
         def fetch(start, end):
             gaql = f"""
                 SELECT
-                    campaign.id, campaign.name,
+                    {resource}.id, {resource}.{name_field},
                     metrics.clicks, metrics.impressions, metrics.cost_micros, metrics.conversions
-                FROM campaign
+                FROM {resource}
                 WHERE segments.date BETWEEN '{start}' AND '{end}'
-                AND campaign.status != 'REMOVED'
-                ORDER BY metrics.cost_micros DESC
-                LIMIT 50
+                { "AND campaign.status != 'REMOVED' ORDER BY metrics.cost_micros DESC LIMIT 50" if breakdown == "campaign" else "" }
             """
             return with_retry(run_query, client, customer_id, gaql)
 
@@ -311,8 +313,8 @@ def compare_periods(
 
         def to_dict(rows):
             return {
-                str(r.campaign.id): {
-                    "name": r.campaign.name,
+                str(getattr(r, resource).id): {
+                    "name": getattr(getattr(r, resource), name_field),
                     "clicks": r.metrics.clicks,
                     "impressions": r.metrics.impressions,
                     "cost": round(r.metrics.cost_micros / 1_000_000, 2),
@@ -329,7 +331,7 @@ def compare_periods(
             r1 = p1.get(cid, {})
             r2 = p2.get(cid, {})
             comparison.append({
-                "campaign_id": cid,
+                ("customer_id" if breakdown == "account" else "campaign_id"): cid,
                 "name": r1.get("name") or r2.get("name", ""),
                 "period1": {k: r1.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]},
                 "period2": {k: r2.get(k, 0) for k in ["clicks", "impressions", "cost", "conversions"]},
@@ -342,7 +344,7 @@ def compare_periods(
         return {
             "period1": f"{period1_start} to {period1_end}",
             "period2": f"{period2_start} to {period2_end}",
-            "campaigns": comparison,
+            ("accounts" if breakdown == "account" else "campaigns"): comparison,
         }
     except Exception as e:  # noqa: BLE001 - tool boundary: any failure returns an error dict
         return _err(e)
